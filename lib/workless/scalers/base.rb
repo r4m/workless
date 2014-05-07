@@ -22,7 +22,7 @@ module Delayed
 
         def rescue_heroku_errors
           yield
-        rescue Heroku::API::Errors::NilApp, Heroku::API::Errors::Unauthorized => e
+        rescue ::Heroku::API::Errors::NilApp, ::Heroku::API::Errors::Unauthorized => e
           if defined?(Rollbar)
             Rollbar.report_exception(e)
             Rails.logger.error "WORKLESS error. Reported to Rollbar the following exception: " + e.inspect
