@@ -20,7 +20,7 @@ module Delayed
           @client ||= ::Heroku::API.new(:api_key => ENV['HEROKU_API_KEY'])
         end
 
-        def self.rescue_heroku_errors
+        def rescue_heroku_errors
           yield
         rescue Heroku::API::Errors::NilApp, Heroku::API::Errors::Unauthorized => e
           if defined?(Rollbar)

@@ -7,15 +7,15 @@ module Delayed
         extend Delayed::Workless::Scaler::HerokuClient
 
         def self.up
-          self.rescue_heroku_errors { client.post_ps_scale(ENV['APP_NAME'], 'worker', self.workers_needed) if self.workers_needed > self.min_workers and self.workers < self.workers_needed }
+          rescue_heroku_errors { client.post_ps_scale(ENV['APP_NAME'], 'worker', self.workers_needed) if self.workers_needed > self.min_workers and self.workers < self.workers_needed }
         end
 
         def self.down
-          self.rescue_heroku_errors { client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers) unless self.jobs.count > 0 or self.workers == self.min_workers }
+          rescue_heroku_errors { client.post_ps_scale(ENV['APP_NAME'], 'worker', self.min_workers) unless self.jobs.count > 0 or self.workers == self.min_workers }
         end
 
         def self.workers
-          self.rescue_heroku_errors { client.get_ps(ENV['APP_NAME']).body.count { |p| p["process"] =~ /worker\.\d?/ } }
+          rescue_heroku_errors { client.get_ps(ENV['APP_NAME']).body.count { |p| p["process"] =~ /worker\.\d?/ } }
         end
 
         # Returns the number of workers needed based on the current number of pending jobs and the settings defined by:
