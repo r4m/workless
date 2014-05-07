@@ -20,6 +20,17 @@ module Delayed
           @client ||= ::Heroku::API.new(:api_key => ENV['HEROKU_API_KEY'])
         end
 
+        def self.rescue_heroku_errors
+          yield
+        rescue Heroku::API::Errors::NilApp, Heroku::API::Errors::Unauthorized => e
+          if defined?(Rollbar)
+            Rollbar.report_exception(e)
+            Rails.logger.error "WORKLESS error. Reported to Rollbar the following exception: " + e.inspect
+          else
+            Rails.logger.error "WORKLESS error. Exception: " + e.inspect
+          end
+        end
+
       end
 
     end
